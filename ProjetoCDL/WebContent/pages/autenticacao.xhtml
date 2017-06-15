@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistemas.xhtml">
+	<h:head>
+		<meta http-equiv="Content-Type"
+			content="text/html; charset=ISO-8859-1" />
+		<title>CDL</title>
+		<h:outputStylesheet library="css" name="estilos.css" />
+		<h:outputScript library="js" name="scripts.js" />
+	</h:head>
+
+	<ui:define name="conteudo">
+		<div align="center">
+			<h:form id="formLogar">
+
+				<h:panelGrid cellpadding="10">
+					<p:toolbar>
+						<f:facet name="left">
+							<h:outputText value="Autenticação do usuário" />
+						</f:facet>
+					</p:toolbar>
+				</h:panelGrid>
+
+
+				<h:panelGrid id="pnlLogar" columns="2" cellpadding="5">
+
+					<p:outputLabel for="usu" value="Usuário: " />
+					
+					<h:inputText id="usu" size="8" maxlength="8" required="true"
+						value="#{MBlogado.usuarioLogado.id}"
+						requiredMessage="Informe o código de usuário!">
+						
+					</h:inputText>
+
+					<p:outputLabel for="sen" value="Senha: " />
+					<p:password id="sen" maxlength="8" size="8" required="true"
+						value="#{MBlogado.usuarioLogado.senha}"
+						requiredMessage="Informe a senha do usuário!" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="1" cellpadding="5">
+					<p:commandButton value="Entrar" update=":msgGlobal"
+						icon="ui-icon-person" action="#{MBlogado.entrar}" />
+				</h:panelGrid>
+
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

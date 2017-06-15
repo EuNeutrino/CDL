@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistemas.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="formFuncao">
+			<p:dataTable id="tableFuncao"
+				emptyMessage="Nenhum registo encontrado!" var="funcao"
+				value="#{MBfuncao.itens}" paginator="true" rows="8"
+				filteredValue="#{MBfuncao.itensFiltrados}">
+
+				<f:facet name="header">
+                    Função - Listagem
+                </f:facet>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgExcluir').show();"
+						update=":formExcluir:panelExcluir">
+						<f:setPropertyActionListener target="#{MBfuncao.funcao}"
+							value="#{funcao}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgEditar').show();"
+						update=":formEditar:panelEditar">
+						<f:setPropertyActionListener target="#{MBfuncao.funcao}"
+							value="#{funcao}" />
+					</p:commandButton>
+
+				</p:column>
+				<p:column headerText="Codigo" sortBy="#{funcao.id}"
+					filterBy="#{funcao.id}">
+					<h:outputText value="#{funcao.id}" />
+				</p:column>
+
+				<p:column headerText="Nome" filterBy="#{funcao.nome}"
+					sortBy="#{funcao.nome}">
+					<h:outputText value="#{funcao.nome}" />
+				</p:column>
+
+
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo" icon="ui-icon-circle-plus"
+						actionListener="#{MBfuncao.prepararNovo}"
+						oncomplete="PF('dlgNovo').show();" update=":formNovo:panelNovo" />
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+		<p:dialog widgetVar="dlgNovo" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Função - Novo">
+
+			<h:form id="formNovo">
+				<h:panelGrid id="panelNovo" columns="4" cellpadding="5">
+
+					<p:outputLabel for="nomeNovo" value="Nome: " />
+					<p:inputText id="nomeNovo" size="35" maxlength="35" required="true"
+						requiredMessage="O nome é obrigatório!"
+						value="#{MBfuncao.funcao.nome}" />
+
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="4">
+					<p:commandButton id="btnGravar" value="Gravar" icon="ui-icon-check"
+						actionListener="#{MBfuncao.novo}"
+						oncomplete="verificar(xhr,status, args, 'dlgNovo', 'tableFuncao')"
+						update=":formFuncao:tableFuncao :msgGlobal" />
+
+
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						process="@this" onclick="PF('dlgNovo').hide(); "
+						update=":formNovo:panelNovo">
+						<p:resetInput target="panelNovo" />
+					</p:commandButton>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgExcluir" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Unidade - Excluir">
+
+			<h:form id="formExcluir">
+				<h:panelGrid id="panelExcluir" columns="2" cellpadding="5">
+					<h:outputLabel value="Código:" />
+					<h:outputText value="#{MBfuncao.funcao.id}" />
+					<h:outputLabel value="Nome : " />
+					<h:outputText value="#{MBfuncao.funcao.nome}" />
+				</h:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton value="Excluir" icon="ui-icon-check"
+						actionListener="#{MBfuncao.excluir}"
+						oncomplete="PF('dlgExcluir').hide();"
+						update=":formFuncao:tableFuncao :msgGlobal" />
+
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						onclick="PF('dlgExcluir').hide();"
+						update=":formExcluir:panelExcluir" />
+				</p:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+
+
+		<p:dialog widgetVar="dlgEditar" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Função - Editar">
+
+			<h:form id="formEditar">
+
+				<h:panelGrid id="panelEditar" columns="2" cellpadding="5">
+					<h:outputLabel value="Código:" />
+					<h:outputText value="#{MBfuncao.funcao.id}" />
+
+					<p:outputLabel for="nomeEditar" value="Nome: " />
+					<p:inputText id="nomeEditar" size="35" maxlength="35"
+						required="true" requiredMessage="O  nome é obrigatório!"
+						value="#{MBfuncao.funcao.nome}" />
+
+
+				</h:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton value="Editar" icon="ui-icon-check"
+						actionListener="#{MBfuncao.editar}"
+						oncomplete="verificar(xhr,status, args, 'dlgEditar', 'tableFuncao')"
+						update=":formFuncao:tableFuncao :msgGlobal">
+						<p:resetInput target="panelEditar" />
+					</p:commandButton>
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						process="@this" onclick="PF('dlgEditar').hide();">
+						<p:resetInput target="panelEditar" />
+
+					</p:commandButton>
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

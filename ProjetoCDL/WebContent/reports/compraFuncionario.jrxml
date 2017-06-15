@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-05-30T20:18:32 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ff05c567-b4ba-44db-a472-33265d31edfb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CDL"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="184"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="809"/>
+	<parameter name="DAT_INICIO" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="DATA_FINAL" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[SELECT tab_compra_funcionario.`dataCadastro` AS tab_compra_funcionario_dataCadastro,
+	tab_compra_funcionario.`dataVencimento` AS tab_compra_funcionario_dataVencimento,
+	tab_compra_funcionario.observacao AS tab_compra_funcionario_observacao,
+	tab_compra_funcionario.status AS tab_compra_funcionario_status,
+	tab_compra_funcionario.`valorCompra` AS tab_compra_funcionario_valorCompra,
+	tab_funcionario.nome AS tab_funcionario_nome,
+	tab_funcionario.documento AS tab_funcionario_documento,
+	tab_unidade.nome AS tab_unidade_nome,
+	tab_fornecedor.fantasia AS tab_fornecedor_fantasia
+FROM tab_fornecedor tab_fornecedor
+	INNER JOIN tab_compra_funcionario tab_compra_funcionario ON 
+	 tab_fornecedor.`idFornecedor` = tab_compra_funcionario.`fornecedor_idFornecedor` 
+	INNER JOIN tab_funcionario tab_funcionario ON 
+	 tab_compra_funcionario.`funcionario_idFuncionario` = tab_funcionario.`idFuncionario` 
+	INNER JOIN tab_unidade tab_unidade ON 
+	 tab_compra_funcionario.`unidade_idUnidade` = tab_unidade.`idUnidade` 
+WHERE 
+	 $X{[BETWEEN],tab_compra_funcionario.`dataVencimento`,DAT_INICIO,DATA_FINAL} 
+	 AND	 'tab_compra_funcionario_status' like '%AB%'
+ORDER BY tab_funcionario_nome ASC,
+	tab_compra_funcionario_dataVencimento ASC]]>
+	</queryString>
+	<field name="tab_compra_funcionario_dataCadastro" class="java.sql.Date"/>
+	<field name="tab_compra_funcionario_dataVencimento" class="java.sql.Date"/>
+	<field name="tab_compra_funcionario_observacao" class="java.lang.String"/>
+	<field name="tab_compra_funcionario_status" class="java.lang.String"/>
+	<field name="tab_compra_funcionario_valorCompra" class="java.lang.Double"/>
+	<field name="tab_funcionario_nome" class="java.lang.String"/>
+	<field name="tab_funcionario_documento" class="java.lang.Long"/>
+	<field name="tab_unidade_nome" class="java.lang.String"/>
+	<field name="tab_fornecedor_fantasia" class="java.lang.String"/>
+	<variable name="subtotalCompra" class="java.lang.Double" resetType="Group" resetGroup="funcionario" calculation="Sum">
+		<variableExpression><![CDATA[$F{tab_compra_funcionario_valorCompra}]]></variableExpression>
+	</variable>
+	<variable name="tab_compra_funcionario_valorCompra_1" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{tab_compra_funcionario_valorCompra}]]></variableExpression>
+	</variable>
+	<group name="funcionario">
+		<groupExpression><![CDATA[$F{tab_funcionario_nome}]]></groupExpression>
+		<groupHeader>
+			<band height="3"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="36">
+				<textField pattern="R$ #,##0.00">
+					<reportElement x="270" y="0" width="119" height="20" uuid="cedf1143-a7ec-4ac1-8bf1-6db8fa8f2b03"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{subtotalCompra}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="-11" y="16" width="568" height="3" uuid="10b57d5c-5c89-4791-adef-fd3b3b6507b9"/>
+				</line>
+				<textField pattern="">
+					<reportElement x="70" y="-1" width="100" height="16" uuid="8c9aef86-b329-4d90-8292-ebbd8082d787"/>
+					<textFieldExpression><![CDATA[$F{tab_funcionario_documento}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="-8" y="0" width="78" height="15" uuid="fd49525c-0393-4922-a961-8f2a7e88ffdd"/>
+					<text><![CDATA[DOCUMENTO: ]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="-8" y="0" width="565" height="30" uuid="f84acf05-7ddd-476e-b09f-16f4421e09c4"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial Black" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tab_unidade_nome}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="60" splitType="Stretch">
+			<staticText>
+				<reportElement x="-10" y="7" width="566" height="43" uuid="7213ff5a-b9b2-4af6-90f0-95727f930d91"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[RELATÓRIO ANALÍTICO DE COMPRA DE FUNCIONÁRIOS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-8" y="30" width="565" height="1" printWhenGroupChanges="funcionario" uuid="1a12948b-4743-40ff-9aaf-b9c7ffe84f48"/>
+			</line>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement key="" positionType="FixRelativeToBottom" x="272" y="40" width="60" height="19" uuid="765f9bf7-f9b1-4079-a37f-f290be7f1e3b"/>
+				<box>
+					<bottomPen lineWidth="0.2"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{DATA_FINAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="FixRelativeToBottom" x="260" y="40" width="12" height="19" uuid="d6654288-b26b-4aaa-9617-8f525904d23e"/>
+				<box>
+					<bottomPen lineWidth="0.2"/>
+				</box>
+				<textFieldExpression><![CDATA["A"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement key="" positionType="FixRelativeToBottom" x="200" y="39" width="60" height="20" uuid="bd5d13df-746d-45ae-83c0-baf61f09e14c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.2"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{DAT_INICIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="37">
+			<staticText>
+				<reportElement x="-10" y="15" width="189" height="20" uuid="482ca841-cd94-4078-9df4-949d7acc3dd3"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[NOME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="15" width="68" height="20" uuid="b1013b5e-1eb9-44ba-a7e8-8c59bf1486cc"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[COMPRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="248" y="15" width="71" height="20" uuid="f3c39b16-5130-4c75-9f3b-195f74199eb8"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[VENCIMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="319" y="15" width="70" height="20" uuid="4d077540-d10e-434b-abd4-6d6c4e2bba9b"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[VALOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="389" y="16" width="48" height="19" uuid="09d68d70-732e-4b8d-9c5f-85ad9f6aff27"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<text><![CDATA[STATUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="437" y="16" width="120" height="19" uuid="5597d86e-e5c6-40b6-8cf2-b05713f9179c"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[OBSERVAÇÃO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="-10" y="0" width="189" height="20" uuid="15439e65-90df-4979-9ed0-b93eefda2fc2"/>
+				<textFieldExpression><![CDATA[$F{tab_funcionario_nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="248" y="0" width="71" height="20" uuid="d01b85e0-a95e-4843-b93e-1e50f93f494f"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{tab_compra_funcionario_dataVencimento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="R$ #,##0.00">
+				<reportElement x="319" y="0" width="70" height="20" uuid="d75ea419-2622-4768-a3e8-1f1cca9d6c01"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{tab_compra_funcionario_valorCompra}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="179" y="0" width="68" height="20" uuid="425685ab-917b-4030-9d02-7ee5d8c53862"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{tab_compra_funcionario_dataCadastro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="389" y="0" width="48" height="20" uuid="7949ac42-88ed-4d9c-983a-49930162c11a"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{tab_compra_funcionario_status}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="437" y="0" width="121" height="20" uuid="d3e271c8-24dd-4733-aa14-33594aa8c270"/>
+				<textFieldExpression><![CDATA[$F{tab_compra_funcionario_observacao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="70" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="27" splitType="Stretch">
+			<line>
+				<reportElement x="-20" y="0" width="595" height="1" uuid="7f635e26-ec67-4a8d-ad20-0a9f607fb44c"/>
+			</line>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="-10" y="8" width="90" height="19" uuid="f63e76a7-6fcb-4f47-a679-08d1e43444e1"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm">
+				<reportElement x="50" y="8" width="90" height="19" uuid="8c4f9140-de3c-4d80-b3e5-281745d9c143"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="10" width="100" height="14" uuid="8dc5d66c-ab9a-4d48-9f5d-c8b0a6cf2a66"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Página: " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<textField pattern="R$ #,##0.00">
+				<reportElement x="289" y="0" width="100" height="20" uuid="c4a9d047-0ca2-4057-9b40-a5fe1f559f09"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{tab_compra_funcionario_valorCompra_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

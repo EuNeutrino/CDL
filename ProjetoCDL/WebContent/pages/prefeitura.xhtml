@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistemas.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="formPrefeitura">
+			<p:dataTable id="tablePrefeitura"
+				emptyMessage="Nenhum registo encontrado!" var="prefeitura"
+				value="#{MBPrefeitura.itens}" paginator="true" rows="8"
+				filteredValue="#{MBPrefeitura.itensFiltrados}">
+
+				<f:facet name="header">
+                    Prefeitura - Listagem
+                </f:facet>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgExcluir').show();"
+						update=":formExcluir:panelExcluir">
+
+						<f:setPropertyActionListener target="#{MBPrefeitura.prefeitura}"
+							value="#{prefeitura}" />
+
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgEditar').show();"
+						update=":formEditar:panelEditar">
+						<f:setPropertyActionListener target="#{MBPrefeitura.prefeitura}"
+							value="#{prefeitura}" />
+
+					</p:commandButton>
+
+				</p:column>
+				<p:column headerText="Codigo" sortBy="#{prefeitura.id}"
+					filterBy="#{prefeitura.id}">
+					<h:outputText value="#{prefeitura.id}" />
+				</p:column>
+
+				<p:column headerText="Nome" filterBy="#{prefeitura.nome}"
+					sortBy="#{prefeitura.nome}">
+					<h:outputText value="#{prefeitura.nome}" />
+				</p:column>
+
+				<p:column headerText="CNPJ" filterBy="#{prefeitura.documento}"
+					sortBy="#{prefeitura.documento}">
+					<h:outputText value="#{prefeitura.documento}" />
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo" icon="ui-icon-circle-plus"
+						actionListener="#{MBPrefeitura.prepararNovo}"
+						oncomplete="PF('dlgNovo').show();" update=":formNovo:panelNovo" />
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+		<p:dialog widgetVar="dlgNovo" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Prefeitura - Novo">
+
+			<h:form id="formNovo">
+				<h:panelGrid id="panelNovo" columns="4" cellpadding="5">
+
+					<p:outputLabel for="nomeNovo" value="Nome: " />
+					<p:inputText id="nomeNovo" size="40" maxlength="50" required="true"
+						requiredMessage="O nome é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.nome}" />
+
+					<p:outputLabel for="docNovo" value="CNPJ: " />
+					<p:inputMask id="docNovo" mask="99999999999999" required="true"
+						requiredMessage="O CNPJ é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.documento}" />
+
+
+					<p:outputLabel for="endNovo" value="Endereço: " />
+					<p:inputText id="endNovo" size="35" maxlength="35" required="true"
+						requiredMessage="O endereço é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.logradouro}" />
+
+					<p:outputLabel value="Complemento: " />
+					<p:inputText size="35" maxlength="35"
+						value="#{MBPrefeitura.prefeitura.complemento}" />
+
+					<p:outputLabel for="bairroNovo" value="Bairro: " />
+					<p:inputText id="bairroNovo" size="20" maxlength="20"
+						required="true" requiredMessage="O bairro é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.bairro}" />
+
+					<p:outputLabel for="cidNovo" value="Cidade: " />
+					<p:inputText id="cidNovo" size="35" maxlength="35" required="true"
+						requiredMessage="A cidade é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.cidade}" />
+
+					<p:outputLabel value="E-mail: " />
+					<p:inputText size="30" maxlength="30"
+						value="#{MBPrefeitura.prefeitura.email}" />
+
+					<p:outputLabel for="ufNovo" value="Estado: " />
+					<p:selectOneMenu id="ufNovo" filter="true"
+						value="#{MBPrefeitura.prefeitura.uf}" style="width:125px"
+						required="true">
+						<f:selectItem itemLabel="Bahia" itemValue="BA" />
+						<f:selectItem itemLabel="Alagoas" itemValue="AL" />7
+						<f:selectItem itemLabel="Sergipe" itemValue="SE" />
+						<f:selectItem itemLabel="Pernambuco" itemValue="PE" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="cepNovo" value="CEP: " />
+					<p:inputMask id="cepNovo" mask="99.999-999" required="true"
+						size="10" requiredMessage="O CEP é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.cep}" />
+
+					<p:outputLabel for="foneNovo" value="Fone Celular: " />
+					<p:inputMask id="foneNovo" mask="(99)-99999-9999" size="13"
+						value="#{MBPrefeitura.prefeitura.fonCel}" />
+
+					<p:outputLabel value="Fone fixo: " />
+					<p:inputMask mask="(99)-9999-9999" size="13"
+						value="#{MBPrefeitura.prefeitura.foneFixo}" />
+
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton id="btnGravar" value="Gravar" icon="ui-icon-check"
+						actionListener="#{MBPrefeitura.novo}"
+						oncomplete="verificar(xhr,status, args, 'dlgNovo', 'tablePrefeitura')"
+						update=":formPrefeitura:tablePrefeitura :msgGlobal" />
+
+
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						process="@this" onclick="PF('dlgNovo').hide(); "
+						update=":formNovo:panelNovo">
+						<p:resetInput target="panelNovo" />
+					</p:commandButton>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgExcluir" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Prefeitura - Excluir">
+
+			<h:form id="formExcluir">
+				<h:panelGrid id="panelExcluir" columns="2" cellpadding="5">
+					<h:outputLabel value="Código:" />
+					<h:outputText value="#{MBPrefeitura.prefeitura.id}" />
+					<h:outputLabel value="Nome da Prefeitura:" />
+					<h:outputText value="#{MBPrefeitura.prefeitura.nome}" />
+				</h:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton value="Excluir" icon="ui-icon-check"
+						actionListener="#{MBPrefeitura.excluir}"
+						oncomplete="PF('dlgExcluir').hide();"
+						update=":formPrefeitura:tablePrefeitura :msgGlobal" />
+
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						onclick="PF('dlgExcluir').hide();"
+						update=":formExcluir:panelExcluir" />
+				</p:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+
+
+		<p:dialog widgetVar="dlgEditar" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Prefeitura - Editar">
+
+			<h:form id="formEditar">
+
+				<h:panelGrid id="panelEditar" columns="4" cellpadding="5">
+
+					<p:outputLabel for="nomeNovo" value="Nome: " />
+					<p:inputText id="nomeNovo" size="40" maxlength="50" required="true"
+						requiredMessage="O nome é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.nome}" />
+
+					<p:outputLabel for="docNovo" value="CNPJ: " />
+					<p:inputMask id="docNovo" mask="99999999999999" required="true"
+						requiredMessage="O CNPJ é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.documento}" />
+
+
+					<p:outputLabel for="endNovo" value="Endereço: " />
+					<p:inputText id="endNovo" size="35" maxlength="35" required="true"
+						requiredMessage="O endereço é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.logradouro}" />
+
+					<p:outputLabel value="Complemento: " />
+					<p:inputText size="35" maxlength="35"
+						value="#{MBPrefeitura.prefeitura.complemento}" />
+
+					<p:outputLabel for="bairroNovo" value="Bairro: " />
+					<p:inputText id="bairroNovo" size="20" maxlength="20"
+						required="true" requiredMessage="O bairro é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.bairro}" />
+
+					<p:outputLabel for="cidNovo" value="Cidade: " />
+					<p:inputText id="cidNovo" size="35" maxlength="35" required="true"
+						requiredMessage="A cidade é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.cidade}" />
+
+					<p:outputLabel value="E-mail: " />
+					<p:inputText size="30" maxlength="30"
+						value="#{MBPrefeitura.prefeitura.email}" />
+
+					<p:outputLabel for="ufNovo" value="Estado: " />
+					<p:selectOneMenu id="ufNovo" filter="true"
+						value="#{MBPrefeitura.prefeitura.uf}" style="width:125px"
+						required="true">
+						<f:selectItem itemLabel="Bahia" itemValue="BA" />
+						<f:selectItem itemLabel="Alagoas" itemValue="AL" />7
+						<f:selectItem itemLabel="Sergipe" itemValue="SE" />
+						<f:selectItem itemLabel="Pernambuco" itemValue="PE" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="cepNovo" value="CEP: " />
+					<p:inputMask id="cepNovo" mask="99.999-999" required="true"
+						size="10" requiredMessage="O CEP é obrigatório!"
+						value="#{MBPrefeitura.prefeitura.cep}" />
+
+					<p:outputLabel for="foneNovo" value="Fone Celular: " />
+					<p:inputMask id="foneNovo" mask="(99)-99999-9999" size="13"
+						value="#{MBPrefeitura.prefeitura.fonCel}" />
+
+					<p:outputLabel value="Fone fixo: " />
+					<p:inputMask mask="(99)-9999-9999" size="13"
+						value="#{MBPrefeitura.prefeitura.foneFixo}" />
+
+					<p:outputLabel value="Código: " />
+					<p:outputLabel value="#{MBPrefeitura.prefeitura.id}" />
+
+
+				</h:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton value="Editar" icon="ui-icon-check"
+						actionListener="#{MBPrefeitura.editar}"
+						oncomplete="verificar(xhr,status, args, 'dlgEditar', 'tablePrefeitura')"
+						update=":formPrefeitura:tablePrefeitura :msgGlobal">
+						<p:resetInput target="panelEditar" />
+
+					</p:commandButton>
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						process="@this" onclick="PF('dlgEditar').hide();">
+						<p:resetInput target="panelEditar" />
+
+						<!-- resetInput sereve para limpar os campos do formulario -->
+
+					</p:commandButton>
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

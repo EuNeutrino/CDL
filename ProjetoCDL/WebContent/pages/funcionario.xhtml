@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistemas.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="formFuncionario">
+			<p:dataTable id="tableFuncionario"
+				emptyMessage="Nenhum registo encontrado!" var="funcionario"
+				value="#{MBfuncionario.itens}" paginator="true" rows="8"
+				filteredValue="#{MBfuncionario.itensFiltrados}">
+
+				<f:facet name="header">
+                    Funcionário - Listagem
+                </f:facet>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgExcluir').show();"
+						update=":formExcluir:panelExcluir">
+
+						<f:setPropertyActionListener target="#{MBfuncionario.funcionario}"
+							value="#{funcionario}" />
+
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						actionListener="#{MBfuncionario.prepaparEditar}"
+						oncomplete="PF('dlgEditar').show();"
+						update=":formEditar:panelEditar">
+						<f:setPropertyActionListener target="#{MBfuncionario.funcionario}"
+							value="#{funcionario}" />
+
+					</p:commandButton>
+
+				</p:column>
+				<p:column headerText="Codigo" sortBy="#{funcionario.id}"
+					filterBy="#{funcionario.id}">
+					<h:outputText value="#{funcionario.id}" />
+				</p:column>
+
+				<p:column headerText="Nome" filterBy="#{funcionario.nome}"
+					sortBy="#{funcionario.nome}">
+					<h:outputText value="#{funcionario.nome}" />
+				</p:column>
+
+				<p:column headerText="CPF" filterBy="#{funcionario.documento}"
+					sortBy="#{funcionario.documento}">
+					<h:outputText value="#{funcionario.documento}" />
+				</p:column>
+
+				<p:column headerText="Setor">
+					<h:outputText value="#{funcionario.setor.nome}" />
+				</p:column>
+
+				<p:column headerText="Função">
+					<h:outputText value="#{funcionario.funcao.nome}" />
+				</p:column>
+
+				<p:column headerText="Prefeitura">
+					<h:outputText value="#{funcionario.prefeitura.nome}" />
+				</p:column>
+
+				<p:column headerText="Fone Celular">
+					<h:outputText value="#{funcionario.fonCel}" />
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo" icon="ui-icon-circle-plus"
+						actionListener="#{MBfuncionario.prepararNovo}"
+						oncomplete="PF('dlgNovo').show();" update=":formNovo:panelNovo" />
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+		<p:dialog widgetVar="dlgNovo" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Funcionário - Novo">
+
+			<h:form id="formNovo">
+				<h:panelGrid id="panelNovo" columns="4" cellpadding="5">
+
+					<p:outputLabel for="nomeNovo" value="Nome: " />
+					<p:inputText id="nomeNovo" size="40" maxlength="50" required="true"
+						requiredMessage="O nome é obrigatório!"
+						value="#{MBfuncionario.funcionario.nome}" />
+
+					<p:outputLabel for="docNovo" value="CPF: " />
+					<p:inputMask id="docNovo" mask="99999999999" required="true"
+						requiredMessage="O CPF é obrigatório!"
+						value="#{MBfuncionario.funcionario.documento}" />
+
+					<p:outputLabel for="salNovo" value="Salário: " />
+					<p:inputNumber id="salNovo"
+						value="#{MBfuncionario.funcionario.salario}" required="true"
+						symbol=" R$" symbolPosition="p" decimalSeparator=","
+						thousandSeparator="." requiredMessage="Digite o salário" />
+
+
+					<p:outputLabel for="endNovo" value="Endereço: " />
+					<p:inputText id="endNovo" size="35" maxlength="35" required="true"
+						requiredMessage="O endereço é obrigatório!"
+						value="#{MBfuncionario.funcionario.logradouro}" />
+
+					<p:outputLabel value="Complemento: " />
+					<p:inputText size="35" maxlength="35"
+						value="#{MBfuncionario.funcionario.complemento}" />
+
+					<p:outputLabel for="bairroNovo" value="Bairro: " />
+					<p:inputText id="bairroNovo" size="20" maxlength="20"
+						required="true" requiredMessage="O bairro é obrigatório!"
+						value="#{MBfuncionario.funcionario.bairro}" />
+
+					<p:outputLabel for="cidNovo" value="Cidade: " />
+					<p:inputText id="cidNovo" size="35" maxlength="35" required="true"
+						requiredMessage="A cidade é obrigatório!"
+						value="#{MBfuncionario.funcionario.cidade}" />
+
+					<p:outputLabel value="E-mail: " />
+					<p:inputText size="30" maxlength="30"
+						value="#{MBfuncionario.funcionario.email}" />
+
+					<p:outputLabel for="ufNovo" value="Estado: " />
+					<p:selectOneMenu id="ufNovo" filter="true"
+						value="#{MBfuncionario.funcionario.uf}" style="width:125px"
+						required="true">
+						<f:selectItem itemLabel="Bahia" itemValue="BA" />
+						<f:selectItem itemLabel="Alagoas" itemValue="AL" />7
+						<f:selectItem itemLabel="Sergipe" itemValue="SE" />
+						<f:selectItem itemLabel="Pernambuco" itemValue="PE" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="cepNovo" value="CEP: " />
+					<p:inputMask id="cepNovo" mask="99.999-999" required="true"
+						size="10" requiredMessage="O CEP é obrigatório!"
+						value="#{MBfuncionario.funcionario.cep}" />
+
+					<p:outputLabel for="foneNovo" value="Fone Celular: " />
+					<p:inputMask id="foneNovo" mask="(99)-99999-9999" size="13"
+						value="#{MBfuncionario.funcionario.fonCel}" />
+
+					<p:outputLabel value="Fone fixo: " />
+					<p:inputMask mask="(99)-9999-9999" size="13"
+						value="#{MBfuncionario.funcionario.foneFixo}" />
+
+
+
+					<p:outputLabel for="funcao" value="Função " />
+					<p:selectOneMenu id="funcao" filter="true"
+						converter="omnifaces.SelectItemsConverter"
+						value="#{MBfuncionario.funcionario.funcao}" effect="highlight"
+						required="true" requiredMessage="A função é obrigatório!">
+
+
+						<f:selectItem itemValue="" itemLabel="Selecione uma função" />
+
+
+						<f:selectItems value="#{MBfuncionario.comboFuncao}" var="f"
+							itemLabel="#{f.nome}" itemValue="#{f}" />
+					</p:selectOneMenu>
+
+
+
+					<p:outputLabel for="setor" value="Setor " />
+					<p:selectOneMenu id="setor" filter="true"
+						converter="omnifaces.SelectItemsConverter"
+						value="#{MBfuncionario.funcionario.setor}" effect="highlight"
+						required="true" requiredMessage="O setor é obrigatório!">
+
+						<f:selectItem itemValue="" itemLabel="Selecione um setor" />
+
+						<f:selectItems value="#{MBfuncionario.comboSetor}" var="s"
+							itemLabel="#{s.nome}" itemValue="#{s}" />
+
+					</p:selectOneMenu>
+
+					<p:outputLabel for="prefeitura" value="Prefeitura " />
+					<p:selectOneMenu id="prefeitura" filter="true"
+						converter="omnifaces.SelectItemsConverter"
+						value="#{MBfuncionario.funcionario.prefeitura}" effect="highlight"
+						required="true" requiredMessage="A prefeitura é obrigatório!">
+
+						<f:selectItem itemValue="" itemLabel="Selecione a prefeitura" />
+
+						<f:selectItems value="#{MBfuncionario.comboPrefeitura}" var="p"
+							itemLabel="#{p.nome}" itemValue="#{p}" />
+
+					</p:selectOneMenu>
+
+
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton id="btnGravar" value="Gravar" icon="ui-icon-check"
+						actionListener="#{MBfuncionario.novo}"
+						oncomplete="verificar(xhr,status, args, 'dlgNovo', 'tableFuncionario')"
+						update=":formFuncionario:tableFuncionario :msgGlobal" />
+
+
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						process="@this" onclick="PF('dlgNovo').hide(); "
+						update=":formNovo:panelNovo">
+						<p:resetInput target="panelNovo" />
+					</p:commandButton>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgExcluir" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Funcionario - Excluir">
+
+			<h:form id="formExcluir">
+				<h:panelGrid id="panelExcluir" columns="2" cellpadding="5">
+					<h:outputLabel value="Código:" />
+					<h:outputText value="#{MBfuncionario.funcionario.id}" />
+					<h:outputLabel value="Nome do Funcionário:" />
+					<h:outputText value="#{MBfuncionario.funcionario.nome}" />
+				</h:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton value="Excluir" icon="ui-icon-check"
+						actionListener="#{MBfuncionario.excluir}"
+						oncomplete="PF('dlgExcluir').hide();"
+						update=":formFuncionario:tableFuncionario :msgGlobal" />
+
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						onclick="PF('dlgExcluir').hide();"
+						update=":formExcluir:panelExcluir" />
+				</p:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+
+
+		<p:dialog widgetVar="dlgEditar" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Funcionário - Editar">
+
+			<h:form id="formEditar">
+
+				<h:panelGrid id="panelEditar" columns="4" cellpadding="5">
+
+
+
+					<p:outputLabel for="nomeNovo" value="Nome: " />
+					<p:inputText id="nomeNovo" size="40" maxlength="50" required="true"
+						requiredMessage="O nome é obrigatório!"
+						value="#{MBfuncionario.funcionario.nome}" />
+
+					<p:outputLabel for="docNovo" value="CPF: " />
+					<p:inputMask id="docNovo" mask="99999999999" required="true"
+						requiredMessage="O CPF é obrigatório!"
+						value="#{MBfuncionario.funcionario.documento}" />
+						
+						<p:outputLabel for="salNovo" value="Salário: " />
+					<p:inputNumber id="salNovo"
+						value="#{MBfuncionario.funcionario.salario}" required="true"
+						symbol=" R$" symbolPosition="p" decimalSeparator=","
+						thousandSeparator="." requiredMessage="Digite o salário" />
+
+
+					<p:outputLabel for="endNovo" value="Endereço: " />
+					<p:inputText id="endNovo" size="35" maxlength="35" required="true"
+						requiredMessage="O endereço é obrigatório!"
+						value="#{MBfuncionario.funcionario.logradouro}" />
+
+					<p:outputLabel value="Complemento: " />
+					<p:inputText size="35" maxlength="35"
+						value="#{MBfuncionario.funcionario.complemento}" />
+
+					<p:outputLabel for="bairroNovo" value="Bairro: " />
+					<p:inputText id="bairroNovo" size="20" maxlength="20"
+						required="true" requiredMessage="O bairro é obrigatório!"
+						value="#{MBfuncionario.funcionario.bairro}" />
+
+					<p:outputLabel for="cidNovo" value="Cidade: " />
+					<p:inputText id="cidNovo" size="35" maxlength="35" required="true"
+						requiredMessage="A cidade é obrigatório!"
+						value="#{MBfuncionario.funcionario.cidade}" />
+
+					<p:outputLabel value="E-mail: " />
+					<p:inputText size="30" maxlength="30"
+						value="#{MBfuncionario.funcionario.email}" />
+
+					<p:outputLabel for="ufNovo" value="Estado: " />
+					<p:selectOneMenu id="ufNovo" filter="true"
+						value="#{MBfuncionario.funcionario.uf}" style="width:125px"
+						required="true">
+
+						<f:selectItem itemValue="#{MBfuncionario.funcionario.uf}" />
+						<f:selectItem itemLabel="Bahia" itemValue="BA" />
+						<f:selectItem itemLabel="Alagoas" itemValue="AL" />7
+						<f:selectItem itemLabel="Sergipe" itemValue="SE" />
+						<f:selectItem itemLabel="Pernambuco" itemValue="PE" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="cepNovo" value="CEP: " />
+					<p:inputMask id="cepNovo" mask="99.999-999" required="true"
+						size="10" requiredMessage="O CEP é obrigatório!"
+						value="#{MBfuncionario.funcionario.cep}" />
+
+					<p:outputLabel for="foneNovo" value="Fone Celular: " />
+					<p:inputMask id="foneNovo" mask="(99)-99999-9999" size="13"
+						value="#{MBfuncionario.funcionario.fonCel}" />
+
+					<p:outputLabel value="Fone fixo: " />
+					<p:inputMask mask="(99)-9999-9999" size="13"
+						value="#{MBfuncionario.funcionario.foneFixo}" />
+
+					<p:outputLabel for="setor" value="Setor " />
+					<p:selectOneMenu id="setor" filter="true"
+						converter="omnifaces.SelectItemsConverter"
+						value="#{MBfuncionario.funcionario.setor}" effect="highlight"
+						required="true" requiredMessage="O setor é obrigatório!">
+
+
+
+						<f:selectItems value="#{MBfuncionario.comboSetor}" var="st"
+							itemLabel="#{st.nome}" itemValue="#{st}" />
+
+					</p:selectOneMenu>
+
+
+					<p:outputLabel for="funcao" value="Função " />
+					<p:selectOneMenu id="funcao" filter="true"
+						converter="omnifaces.SelectItemsConverter"
+						value="#{MBfuncionario.funcionario.funcao}" effect="highlight"
+						required="true" requiredMessage="A função é obrigatório!">
+
+
+
+						<f:selectItems value="#{MBfuncionario.comboFuncao}" var="f"
+							itemLabel="#{f.nome}" itemValue="#{f}" />
+					</p:selectOneMenu>
+
+
+					<p:outputLabel for="prefeitura" value="Prefeitura " />
+					<p:selectOneMenu id="prefeitura" filter="true"
+						converter="omnifaces.SelectItemsConverter"
+						value="#{MBfuncionario.funcionario.prefeitura}" effect="highlight"
+						required="true" requiredMessage="A prefeitura é obrigatório!">
+
+
+
+						<f:selectItems value="#{MBfuncionario.comboPrefeitura}" var="p"
+							itemLabel="#{p.nome}" itemValue="#{p}" />
+
+					</p:selectOneMenu>
+
+
+					<p:outputLabel for="nomeNovo" value="Código : " />
+					<p:outputLabel value="#{MBfuncionario.funcionario.id}" />
+
+				</h:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton value="Editar" icon="ui-icon-check"
+						actionListener="#{MBfuncionario.editar}"
+						oncomplete="verificar(xhr,status, args, 'dlgEditar', 'tableFuncionario')"
+						update=":formFuncionario:tableFuncionario :msgGlobal">
+						<p:resetInput target="panelEditar" />
+					</p:commandButton>
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						process="@this" onclick="PF('dlgEditar').hide();">
+						<p:resetInput target="panelEditar" />
+
+
+
+					</p:commandButton>
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

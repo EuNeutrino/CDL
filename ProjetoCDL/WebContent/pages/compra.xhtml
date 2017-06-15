@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistemas.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="formCompra">
+			<p:dataTable id="tableCompra"
+				selection="#{MBcompra.compraSelecionada}" selectionMode="single"
+				rowKey="#{compra.id}" emptyMessage="Nenhum registo encontrado!"
+				var="compra" value="#{MBcompra.itens}" paginator="true" rows="8"
+				filteredValue="#{MBcompra.itensFiltrados}">
+				<p:ajax event="rowSelect" listener="#{MBcompra.onRowSelect}" />
+				<p:ajax event="rowUnselect" listener="#{MBcompra.onRowUnselect}" />
+
+				<f:facet name="header">
+                    Compra - Listagem
+                </f:facet>
+
+				<p:column headerText="Opções" width="120">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgExcluir').show();"
+						update=":formExcluir:panelExcluir">
+						<f:setPropertyActionListener target="#{MBcompra.compra}"
+							value="#{compra}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgEditar').show();"
+						update=":formEditar:panelEditar">
+						<f:setPropertyActionListener target="#{MBcompra.compra}"
+							value="#{compra}" />
+					</p:commandButton>
+
+
+					<p:commandButton update=":formParcela:tableParcela"
+						oncomplete="PF('dlgParcela').show()" icon="ui-icon-search"
+						title="View">
+						<f:setPropertyActionListener target="#{MBcompra.compra}"
+							value="#{compra}" />
+					</p:commandButton>
+
+
+				</p:column>
+				<p:column headerText="Codigo" sortBy="#{compra.id}" width="105"
+					resizable="true" filterBy="#{compra.id}">
+					<h:outputText value="#{compra.id}" />
+				</p:column>
+
+				<p:column headerText="Funcionario"
+					filterBy="#{compra.funcionario.nome}"
+					sortBy="#{compra.funcionario.nome}">
+					<h:outputText value="#{compra.funcionario.nome}" />
+				</p:column>
+
+				<p:column headerText="Fornecedor" width="240"
+					filterBy="#{compra.fornecedor.fantasia}"
+					sortBy="#{compra.fornecedor.fantasia}">
+					<h:outputText value="#{compra.fornecedor.fantasia}" />
+				</p:column>
+
+				<p:column headerText="Valor da compra" width="140"
+					filterBy="#{compra.valorCompra}" sortBy="#{compra.valorCompra}">
+					<h:outputText value="#{compra.valorCompra}">
+						<f:convertNumber currencyCode="BRL" type="currency" symbol=" R$"
+							pattern="#,##0.00" minFractionDigits="2" decimalSeparator=","
+							symbolPosition="p" thousandSeparator="." />
+
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Compra" width="120"
+					sortBy="#{compra.dataCompra}">
+					<h:outputText value="#{compra.dataCompra}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo" icon="ui-icon-circle-plus"
+						actionListener="#{MBcompra.prepararNovo}"
+						oncomplete="PF('dlgNovo').show();" update=":formNovo:panelNovo" />
+
+					<p:commandButton value="Relatório" icon="ui-icon-print"
+						onclick="target = '_blank'" oncomplete="PF('dlgImp').show();"
+						update=":formNovo:panelNovo" />
+
+
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+		<p:dialog widgetVar="dlgNovo" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Compra - Novo">
+
+			<h:form id="formNovo">
+				<h:panelGrid id="panelNovo" columns="4" cellpadding="5">
+
+
+					<p:outputLabel for="funcionario" value="Funcionario: " />
+
+					<p:selectOneMenu id="funcionario" filter="true" style="width:350px"
+						converter="omnifaces.SelectItemsConverter"
+						value="#{MBcompra.compra.funcionario}" effect="highlight"
+						required="true" requiredMessage="O funcionário é obrigatório!">
+
+						<f:selectItem itemValue="" itemLabel="Selecione o funcionario" />
+
+						<f:selectItems value="#{MBcompra.comboFuncionario}" var="func"
+							itemLabel="#{func.nome}" itemValue="#{func}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="autorizaco" value="Autorização: " />
+					<h:inputText id="autorizaco" maxlength="10" size="10"
+						value="#{MBcompra.compra.autorizacao}" required="true"
+						requiredMessage="Digite a autorização">
+
+						<f:convertNumber pattern="##########" maxFractionDigits="0"
+							integerOnly="true" />
+					</h:inputText>
+
+
+					<p:outputLabel for="fornecedor" value="Fornecedor: " />
+					<p:selectOneMenu id="fornecedor" filter="true" style="width:350px"
+						converter="omnifaces.SelectItemsConverter"
+						value="#{MBcompra.compra.fornecedor}" effect="highlight"
+						required="true" requiredMessage="O fornecedor é obrigatório!">
+
+						<f:selectItem itemValue="" itemLabel="Selecione o fornecedor" />
+
+						<f:selectItems value="#{MBcompra.comboFornecedor}" var="forn"
+							itemLabel="#{forn.fantasia}" itemValue="#{forn}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="dataCompra" value="Data da compra: " />
+					<p:calendar id="dataCompra" value="#{MBcompra.compra.dataCompra}"
+						locale="pt_BR" required="true" pattern="dd/MM/yyyy" mask="true"
+						size="10" />
+
+					<h:outputLabel for="vlrCompra" value="Valor da Compra:" />
+					<p:inputNumber id="vlrCompra"
+						value="#{MBcompra.compra.valorCompra}" required="true"
+						symbol=" R$" symbolPosition="p" decimalSeparator=","
+						thousandSeparator="." requiredMessage="Digite o valor da compra" />
+
+					<p:outputLabel for="parcelas" value="Parcelas: " />
+					<p:selectOneMenu id="parcelas" filter="true"
+						value="#{MBcompra.compra.parcelas}" style="width:10px"
+						required="true"
+						requiredMessage="Selecione a quantidade de parcelas">
+						<f:selectItem itemLabel="informe a parcela" />
+						<f:selectItem itemLabel=" 1 parcela" itemValue="1" />
+						<f:selectItem itemLabel=" 2 parcelas" itemValue="2" />
+						<f:selectItem itemLabel=" 3 parcelas" itemValue="3" />
+						<f:selectItem itemLabel=" 4 parcelas" itemValue="4" />
+						<f:selectItem itemLabel=" 5 parcelas" itemValue="5" />
+						<f:selectItem itemLabel=" 6 parcelas" itemValue="6" />
+						<f:selectItem itemLabel=" 7 parcelas" itemValue="7" />
+						<f:selectItem itemLabel=" 8 parcelas" itemValue="8" />
+						<f:selectItem itemLabel=" 9 parcelas" itemValue="9" />
+						<f:selectItem itemLabel="10 parcelas" itemValue="10" />
+						<f:selectItem itemLabel="11 parcelas" itemValue="11" />
+						<f:selectItem itemLabel="12 parcelas" itemValue="12" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Observação: " />
+					<h:inputText value="#{MBcompra.compra.observacao}" size="50"
+						maxlength="50" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="4">
+					<p:commandButton id="btnGravar" value="Gravar" icon="ui-icon-check"
+						actionListener="#{MBcompra.novo}"
+						oncomplete="verificar(xhr,status, args, 'dlgNovo', 'tableCompra')"
+						update=":formCompra:tableCompra :msgGlobal" />
+
+
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						process="@this" onclick="PF('dlgNovo').hide(); "
+						update=":formNovo:panelNovo">
+						<p:resetInput target="panelNovo" />
+					</p:commandButton>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgExcluir" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Compra - Excluir">
+
+			<h:form id="formExcluir">
+				<h:panelGrid id="panelExcluir" columns="2" cellpadding="5">
+					<h:outputLabel value="Código:" />
+					<h:outputText value="#{MBsetor.setor.id}" />
+					<h:outputLabel value="Nome: " />
+					<h:outputText value="#{MBsetor.setor.nome}" />
+				</h:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton value="Excluir" icon="ui-icon-check"
+						actionListener="#{MBsetor.excluir}"
+						oncomplete="PF('dlgExcluir').hide();"
+						update=":formCompra:tableCompra :msgGlobal" />
+
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						onclick="PF('dlgExcluir').hide();"
+						update=":formExcluir:panelExcluir" />
+				</p:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+
+
+		<p:dialog widgetVar="dlgEditar" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Compra - Editar">
+
+			<h:form id="formEditar">
+
+				<h:panelGrid id="panelEditar" columns="4" cellpadding="5">
+
+					<p:outputLabel value="Funcionário : " />
+					<p:outputLabel value="#{MBcompra.compra.funcionario.nome}" />
+
+					<p:outputLabel value="Fornecedor : " />
+					<p:outputLabel value="#{MBcompra.compra.fornecedor.fantasia}" />
+
+
+					<p:outputLabel value="Data da compra " />
+					<p:calendar value="#{MBcompra.compra.dataCompra}" disabled="true"
+						effect="highlight" required="true" pattern="dd/MM/yyyy"
+						mask="true" size="10" />
+
+					<p:outputLabel value="Valor da compra: " />
+					<p:inputNumber value="#{MBcompra.compra.valorCompra}" symbol=" R$"
+						decimalSeparator="," symbolPosition="p" thousandSeparator="."
+						disabled="true" />
+
+					<p:outputLabel value="Qtd. de parcela: " />
+					<p:outputLabel value="#{MBcompra.compra.parcelas}" />
+
+
+					<p:outputLabel value="Observação: " />
+					<h:inputText value="#{MBcompra.compra.observacao}" size="50"
+						maxlength="50" />
+
+					<p:outputLabel for="codEditar" value="Código: " />
+					<p:outputLabel id="codEditar" value="#{MBcompra.compra.id}" />
+
+				</h:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton value="Editar" icon="ui-icon-check"
+						actionListener="#{MBcompra.editar}"
+						oncomplete="verificar(xhr,status, args, 'dlgEditar', 'tableCompra')"
+						update=":formCompra:tableCompra :msgGlobal">
+						<p:resetInput target="panelEditar" />
+					</p:commandButton>
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						process="@this" onclick="PF('dlgEditar').hide();">
+						<p:resetInput target="panelEditar" />
+
+
+
+					</p:commandButton>
+				</p:panelGrid>
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgImp" closable="false" draggable="false"
+			resizable="false" modal="true" appendTo="@(body)"
+			header="Relatório analítico de compra de funcionários">
+
+			<h:form id="formImp">
+				<h:panelGrid id="panelImp" columns="4" cellpadding="5">
+
+					<p:outputLabel for="dataImpIni" value="Data inicial:" />
+					<p:calendar id="dataImpIni" effect="highlight" required="true"
+						value="#{MBcompra.inicial}" pattern="dd/MM/yyyy" mask="true"
+						size="10" />
+
+					<p:outputLabel for="dataImpFin" value="Data final:" />
+					<p:calendar id="dataImpFin" effect="highlight" required="true"
+						value="#{MBcompra.fim}" pattern="dd/MM/yyyy" mask="true" size="10" />
+
+
+					<p:commandButton value="Gerar relatório" icon="ui-icon-print"
+						actionListener="#{MBcompra.imprimir}"
+						oncomplete="verificar(xhr,status, args, 'dlgImp', 'tableCompra')"
+						update=":formCompra:tableCompra :msgGlobal :formImp:panelImp ">
+						<p:resetInput target="panelImp" />
+					</p:commandButton>
+
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						process="@this" onclick="PF('dlgImp').hide();" update="panelImp">
+						<p:resetInput target="panelImp" />
+					</p:commandButton>
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+
+		<p:dialog widgetVar="dlgParcela" resizable="false" draggable="false"
+			modal="true" appendTo="@(body)">
+			<h:form id="formParcela">
+
+				<p:dataTable id="tableParcela"
+					emptyMessage="Nenhum registo encontrado!" var="parcela"
+					value="#{MBcompra.parcelasFiltrados}">
+
+					<f:facet name="header">
+                    Parcelamento de Compras
+                </f:facet>
+					<p:column headerText="Parcela" resizable="true">
+						<h:outputText value="#{parcela.parcela}" />
+					</p:column>
+
+					<p:column headerText="Valor" resizable="true">
+						<h:outputText value="#{parcela.valorParcela}">
+							<f:convertNumber currencyCode="BRL" type="currency"
+								pattern="#,##0.00" minFractionDigits="2" decimalSeparator=","
+								symbolPosition="p" thousandSeparator="." />
+						</h:outputText>
+
+					</p:column>
+					<p:column headerText="Vencimento" resizable="true">
+						<h:outputText value="#{parcela.dataVencimento}" />
+					</p:column>
+				</p:dataTable>
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

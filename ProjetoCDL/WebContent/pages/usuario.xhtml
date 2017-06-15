@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistemas.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="formUsuario">
+			<p:dataTable id="tableUsuario"
+				emptyMessage="Nenhum registo encontrado" var="usuario"
+				value="#{MBusuario.itens}" paginator="true" rows="8"
+				filteredValue="#{MBusuario.itensFiltrados}">
+
+				<f:facet name="header">
+                    Usuário - Listagem
+                </f:facet>
+
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						oncomplete="PF('dlgUsuarioExcluir').show();"
+						update=":formUsuarioExcluir:panelUsuarioExcluir">
+						<f:setPropertyActionListener target="#{MBusuario.usuario}"
+							value="#{usuario}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						oncomplete="PF('dlgUsuarioEditar').show();"
+						update=":formUsuarioEditar:panelUsuarioEditar">
+						<f:setPropertyActionListener target="#{MBusuario.usuario}"
+							value="#{usuario}" />
+					</p:commandButton>
+
+				</p:column>
+				<p:column headerText="Codigo" sortBy="#{usuario.id}"
+					filterBy="#{usuario.id}">
+					<h:outputText value="#{usuario.id}" />
+				</p:column>
+
+
+				<p:column headerText="Nome" filterBy="#{usuario.nome}"
+					sortBy="#{usuario.nome}">
+					<h:outputText value="#{usuario.nome}" />
+				</p:column>
+
+
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo" icon="ui-icon-circle-plus"
+						actionListener="#{MBusuario.prepararNovo}"
+						oncomplete="PF('dlgUsuarioNovo').show();"
+						update=":formUsuarioNovo:panelUsuarioNovo" />
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+		<p:dialog widgetVar="dlgUsuarioNovo" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Usuario - Novo">
+
+			<h:form id="formUsuarioNovo">
+				<h:panelGrid id="panelUsuarioNovo" columns="2" cellpadding="5">
+					<p:outputLabel for="nomeNovo" value="Nome do Usuário: " />
+					<p:inputText id="nomeNovo" size="35" maxlength="35" required="true"
+						requiredMessage="O campo nome é obrigatório!"
+						value="#{MBusuario.usuario.nome}" />
+
+
+					<h:outputLabel for="pw2" value="Senha: " />
+					<p:password id="pw2" size="8" maxlength="8"
+						value="#{MBusuario.usuario.senha}" label="Senha" feedback="true"
+						inline="true" required="true"
+						requiredMessage="O campo senha é obrigatório!"
+						promptLabel="Digite a senha" weakLabel="Fraca" goodLabel="Boa"
+						strongLabel="Forte" update=":formUsuarioNovo:msgGlobal" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton id="btnGravar" value="Gravar" icon="ui-icon-check"
+						actionListener="#{MBusuario.novo}"
+						oncomplete="verificar(xhr,status, args, 'dlgUsuarioNovo', 'tableUsuario')"
+						update=":formUsuario:tableUsuario :msgGlobal" />
+
+
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						process="@this" onclick="PF('dlgUsuarioNovo').hide(); "
+						update=":formUsuarioNovo:panelUsuarioNovo">
+						<p:resetInput target="panelUsuarioNovo" />
+					</p:commandButton>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgUsuarioExcluir" closable="false"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Usuario - Excluir">
+
+			<h:form id="formUsuarioExcluir">
+				<h:panelGrid id="panelUsuarioExcluir" columns="2" cellpadding="5">
+					<h:outputLabel value="Código:" />
+					<h:outputText value="#{MBusuario.usuario.id}" />
+					<h:outputLabel value="Nome do usuário:" />
+					<h:outputText value="#{MBusuario.usuario.nome}" />
+				</h:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton value="Excluir" icon="ui-icon-check"
+						actionListener="#{MBusuario.excluir}"
+						oncomplete="PF('dlgUsuarioExcluir').hide();"
+						update=":formUsuario:tableUsuario :msgGlobal" />
+
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						onclick="PF('dlgUsuarioExcluir').hide();"
+						update=":formUsuarioExcluir:panelUsuarioExcluir" />
+				</p:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+
+
+		<p:dialog widgetVar="dlgUsuarioEditar" closable="true"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			header="Usuario - Editar">
+
+			<h:form id="formUsuarioEditar">
+				<h:panelGrid id="panelUsuarioEditar" columns="2" cellpadding="5">
+					<h:outputLabel value="Código:" />
+					<h:outputText value="#{MBusuario.usuario.id}" />
+
+					<h:outputLabel for="nomeEditar" value="Nome do usuário: " />
+					<h:inputText id="nomeEditar" required="true"
+						requiredMessage="O campo nome é obrigatório!"
+						value="#{MBusuario.usuario.nome}" />
+
+					<h:outputLabel for="pw1" value="Senha: " />
+					<p:password id="pw1" size="8" maxlength="8"
+						value="#{MBusuario.usuario.senha}" label="Senha: " feedback="true"
+						required="true" requiredMessage="O campo senha é obrigatório!"
+						promptLabel="Digite a senha" weakLabel="Fraca" goodLabel="Boa"
+						strongLabel="Forte" update=":msgGlobal" />
+
+
+
+				</h:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton value="Editar" icon="ui-icon-check"
+						actionListener="#{MBusuario.editar}"
+						oncomplete="verificar(xhr,status, args, 'dlgUsuarioEditar', 'tableUsuario')"
+						update=":formUsuario:tableUsuario :msgGlobal">
+						<p:resetInput target="panelUsuarioEditar" />
+					</p:commandButton>
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						process="@this" onclick="PF('dlgUsuarioEditar').hide();">
+						<p:resetInput target="panelUsuarioEditar" />
+
+					</p:commandButton>
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>
