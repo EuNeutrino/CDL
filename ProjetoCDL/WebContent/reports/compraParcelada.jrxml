@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-06-16T12:06:52 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="compraParcelada" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="74afb209-b9dc-45fc-87de-c2ee290e3426">
+	<property name="com.jaspersoft.studio.data.sql.tables" value="ZGJfY2RsLnRhYl9jb21wcmFfZnVuY2lvbmFyaW8gLDIzOSw5MSw1Yjg1YjU4Zi1hZTY5LTQwYjIt&#xA;OThmYy05MTg1ZjBiNTgyYTc7ZGJfY2RsLnRhYl91bmlkYWRlICw2NjUsMTUsMjVhMTA5ODMtYmFh&#xA;YS00ZjY2LWE4NWUtNGRlOTRhNzI3OTJjO2RiX2NkbC50YWJfZnVuY2lvbmFyaW8gLDQ2MywyMTQs&#xA;YTI4NTcxNTYtNGJjZi00MWI1LTkxMzAtZjI5Yzg2ZWUyMzlhO2RiX2NkbC50YWJfY29tcHJhX3Bh&#xA;cmNlbGFtZW50byAsMTUsMzE4LGIwMDczYTc5LTQ5ODUtNDZjMy1hOTEwLWI3YmE5OGYzMjU5Mzs="/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="196"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="797"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="CDL"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="605"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="395"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT db_cdl.tab_compra_parcelamento.`dataCompra`,
+	db_cdl.tab_compra_parcelamento.`dataVencimento`,
+	db_cdl.tab_compra_parcelamento.parcela,
+	db_cdl.tab_compra_parcelamento.status,
+	db_cdl.tab_compra_parcelamento.`valorParcela`,
+	db_cdl.tab_compra_funcionario.observacao,
+	db_cdl.tab_compra_funcionario.autorizacao,
+	db_cdl.tab_funcionario.nome,
+	db_cdl.tab_unidade.nome AS nomeUnidade
+FROM db_cdl.tab_compra_parcelamento
+	INNER JOIN db_cdl.tab_compra_funcionario ON 
+	 db_cdl.tab_compra_parcelamento.`compra_idCompra` = db_cdl.tab_compra_funcionario.`idCompra` 
+	INNER JOIN db_cdl.tab_funcionario ON 
+	 db_cdl.tab_compra_funcionario.`funcionario_idFuncionario` = db_cdl.tab_funcionario.`idFuncionario` 
+	 AND db_cdl.tab_compra_parcelamento.`funcionario_idFuncionario` = db_cdl.tab_funcionario.`idFuncionario` 
+	INNER JOIN db_cdl.tab_unidade ON 
+	 db_cdl.tab_compra_funcionario.`unidade_idUnidade` = db_cdl.tab_unidade.`idUnidade`]]>
+	</queryString>
+	<field name="dataCompra" class="java.sql.Date"/>
+	<field name="dataVencimento" class="java.sql.Date"/>
+	<field name="parcela" class="java.lang.Long"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="valorParcela" class="java.math.BigDecimal"/>
+	<field name="observacao" class="java.lang.String"/>
+	<field name="autorizacao" class="java.lang.Long"/>
+	<field name="nome" class="java.lang.String"/>
+	<field name="nomeUnidade" class="java.lang.String"/>
+	<variable name="SubtotalCompra" class="java.lang.Double" resetType="Group" resetGroup="funcionario" calculation="Sum">
+		<variableExpression><![CDATA[$F{valorParcela}]]></variableExpression>
+	</variable>
+	<group name="funcionario">
+		<groupExpression><![CDATA[$F{nome}]]></groupExpression>
+		<groupFooter>
+			<band height="28">
+				<textField pattern="R$ #,##0.00">
+					<reportElement x="319" y="0" width="70" height="20" uuid="92e02c1e-ecc5-4a66-9680-ecb4d21ed56c"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textFieldExpression><![CDATA[$V{SubtotalCompra}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="37" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement x="-10" y="15" width="189" height="20" uuid="94354f0e-2e3a-42ba-88a4-6916f1ad5fd4"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[NOME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="15" width="68" height="20" uuid="5633b34d-8cfc-4ee3-8062-baee266514bc"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[COMPRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="248" y="15" width="71" height="20" uuid="1965dc71-7b50-48a7-89cb-7741e186e940"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[VENCIMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="319" y="15" width="70" height="20" uuid="990b39b2-0261-418a-afaa-c068c741fae8"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<text><![CDATA[VALOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="389" y="16" width="48" height="19" uuid="166d99b3-2cf7-498e-a7bd-8df158b5e9bd"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<text><![CDATA[STATUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="437" y="16" width="120" height="19" uuid="a7226de1-4a6d-4c60-a2d5-17462fd95ee8"/>
+				<box>
+					<bottomPen lineWidth="2.0" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[OBSERVAÇÃO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="-10" y="0" width="189" height="20" uuid="07336d3e-098b-45d0-b649-361eb56d75fc"/>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="180" y="0" width="68" height="20" uuid="ed173017-7553-4207-875b-5b474064f961"/>
+				<textFieldExpression><![CDATA[$F{dataCompra}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="248" y="0" width="70" height="19" uuid="6b89ff3b-7cac-41b1-8cc6-19a9cca4c558"/>
+				<textFieldExpression><![CDATA[$F{dataVencimento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="R$ #,##0.00">
+				<reportElement x="319" y="0" width="70" height="20" uuid="379b84e8-28fe-46ad-8c25-9e679f516c89"/>
+				<textFieldExpression><![CDATA[$F{valorParcela}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="390" y="0" width="47" height="20" uuid="70232a07-6027-43bf-854f-6dace80720b2"/>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="437" y="0" width="120" height="19" uuid="164a8d71-0047-4794-811f-416db387634e"/>
+				<textFieldExpression><![CDATA[$F{observacao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
